@@ -3,6 +3,15 @@ import time
 import pyarrow as pa
 import pyarrow.parquet as pq
 
+SCHEMA = pa.schema([
+    ('event_time_ms', pa.int64()),
+    ('update_id', pa.int64()),
+    ('side', pa.string()),
+    ('level', pa.int8()),
+    ('price', pa.float64()),
+    ('quantity', pa.float64())
+])
+
 rows = []
 
 def record_book(book, update, depth=10):
@@ -24,7 +33,7 @@ def flush():
         return
     output = Path('market_data')
     output.mkdir(exist_ok=True)
-    table = pa.Table.from_pylist(rows)
+    table = pa.Table.from_pylist(rows, schema=SCHEMA)
     filename = output / f'book-{time.time_ns()}.parquet'
     pq.write_table(table, filename, compression='zstd')
     rows.clear()
