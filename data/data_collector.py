@@ -3,6 +3,7 @@ import asyncio
 import requests
 import json
 from decimal import Decimal
+from parquet_writer import record_book, flush, rows
 
 symbol = 'btcusdt'
 
@@ -56,6 +57,9 @@ async def main():
                 elif event['pu'] != previous_u:
                     break
                 update_book(book, event)
+                record_book(book, event)
+                if len(rows) >= 20_000:
+                    flush()
                 previous_u = event['u']
 
 if __name__ == "__main__":
