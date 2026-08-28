@@ -44,7 +44,9 @@ def flush():
     output.mkdir(exist_ok=True)
     table = pa.Table.from_pylist(rows, schema=SCHEMA)
     filename = output / f'book-{time.time_ns()}.parquet'
-    pq.write_table(table, filename, compression='zstd')
+    temporary = output / f'.{filename.name}.tmp' # Hidden (. prefix), temporary (.tmp) file so readers only discover completed files
+    pq.write_table(table, temporary, compression='zstd')
+    temporary.replace(filename)
     rows.clear()
 
 def should_flush():
