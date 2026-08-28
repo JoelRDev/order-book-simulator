@@ -37,3 +37,6 @@ def flush():
     filename = output / f'book-{time.time_ns()}.parquet'
     pq.write_table(table, filename, compression='zstd')
     rows.clear()
+
+def should_flush():
+    return len(rows) >= 20_000

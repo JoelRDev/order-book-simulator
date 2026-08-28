@@ -3,7 +3,7 @@ import asyncio
 import requests
 import json
 from decimal import Decimal
-from data.parquet_writer import record_book, flush, rows
+from data.parquet_writer import record_book, flush, should_flush
 
 symbol = 'btcusdt'
 
@@ -59,7 +59,7 @@ async def main():
                         break
                     update_book(book, event)
                     record_book(book, event)
-                    if len(rows) >= 20_000:
+                    if should_flush():
                         flush()
                     previous_u = event['u']
     finally:
