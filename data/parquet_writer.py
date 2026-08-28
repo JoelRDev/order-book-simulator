@@ -11,7 +11,13 @@ SCHEMA = pa.schema([
     ('level', pa.int8()),
     ('price_e8', pa.int64()),
     ('quantity_e8', pa.int64())
-])
+]).with_metadata({
+    # Version on-disk format so that readers can reject incompatible/incorrect files
+    b'format_version': b'1', # b changes to bytes value as opposed to unicode (expected by PyArrow)
+    b"symbol": b"BTCUSDT",
+    b"depth": b"10",
+    b"scale": b"100000000",
+})
 
 SCALE = Decimal('100000000')
 
