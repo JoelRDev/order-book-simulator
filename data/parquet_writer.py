@@ -2,15 +2,18 @@ from pathlib import Path
 import time
 import pyarrow as pa
 import pyarrow.parquet as pq
+from decimal import Decimal
 
 SCHEMA = pa.schema([
     ('event_time_ms', pa.int64()),
     ('update_id', pa.int64()),
     ('side', pa.string()),
     ('level', pa.int8()),
-    ('price', pa.float64()),
-    ('quantity', pa.float64())
+    ('price_e8', pa.int64()),
+    ('quantity_e8', pa.int64())
 ])
+
+SCALE = Decimal('100000000')
 
 rows = []
 
@@ -24,8 +27,8 @@ def record_book(book, update, depth=10):
                 "update_id": update["u"],
                 "side": side,
                 "level": level,
-                "price": float(price),
-                "quantity": float(quantity),
+                "price_e8": int(price * SCALE),
+                "quantity_e8": int(quantity * SCALE),
             })
 
 def flush():
