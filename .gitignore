@@ -11,3 +11,9 @@ wheels/
 
 # Generated data
 market_data/
+
+# JetBrains IDE settings
+.idea/
+
+# CMake build output
+cmake-build-*/
