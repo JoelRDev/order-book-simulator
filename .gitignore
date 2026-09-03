@@ -17,3 +17,6 @@ market_data/
 
 # CMake build output
 cmake-build-*/
+
+# macOS metadata
+.DS_Store
