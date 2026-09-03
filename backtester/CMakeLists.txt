@@ -3,6 +3,12 @@ add_executable(
         src/main.cpp
 )
 
+target_include_directories(
+        stage1_replay
+        PRIVATE
+        ${CMAKE_CURRENT_SOURCE_DIR}/include
+)
+
 target_compile_features(
         stage1_replay
         PRIVATE
