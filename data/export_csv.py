@@ -36,7 +36,7 @@ def main() -> None:
     parser.add_argument(
         'output',
         type=Path,
-        help="Output Parquet file"
+        help="Output CSV file"
     )
     arguments = parser.parse_args()
     export_csv(arguments.input, arguments.output)
