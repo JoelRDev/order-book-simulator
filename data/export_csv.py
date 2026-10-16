@@ -1,24 +1,19 @@
 import argparse
 import csv
 from pathlib import Path
-import pyarrow.parquet as pq
-
-COLUMNS = [
-    'event_time_ms',
-    'update_id',
-    'side',
-    'level',
-    'price_e8',
-    'quantity_e8',
-]
+import pyarrow.compute as pc
+import pyarrow.dataset as ds
 
 def export_csv(input_path: Path, output_path: Path) -> None:
-    table = pq.read_table(input_path, columns=COLUMNS)
+    # Accepts a single Parquet file or a directory of them (e.g. market_data/book)
+    table = ds.dataset(input_path, format='parquet').to_table()
+    # Stable sort: rows that share a recv_time_ns (one book update) keep their bid/ask level order
+    table = table.take(pc.sort_indices(table, sort_keys=[('recv_time_ns', 'ascending')]))
     output_path.parent.mkdir(parents=True, exist_ok=True)
     with output_path.open('w', newline='') as output_file:
         writer = csv.DictWriter(
             output_file,
-            fieldnames=COLUMNS,
+            fieldnames=table.column_names,
             lineterminator='\n'
         )
         writer.writeheader()
@@ -31,7 +26,7 @@ def main() -> None:
     parser.add_argument(
         'input',
         type=Path,
-        help="Input Parquet file"
+        help="Input Parquet file or directory"
     )
     parser.add_argument(
         'output',

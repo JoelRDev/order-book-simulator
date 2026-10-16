@@ -1,6 +1,7 @@
 add_executable(
         stage1_replay
         src/main.cpp
+        src/csv_reader.cpp
 )
 
 target_include_directories(
